@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>crashV2.1 V5</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Orbitron', sans-serif;
+    background: radial-gradient(circle at top,#111,#000);
+    color:#fff;
+    text-align:center;
+}
+
+/* Top Bar */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 30px;
+    background:#000;
+    border-bottom:1px solid red;
+}
+
+.lang-switch button{
+    background:black;
+    border:1px solid red;
+    color:red;
+    padding:5px 15px;
+    cursor:pointer;
+    margin-left:5px;
+}
+
+.lang-switch button:hover{
+    background:red;
+    color:black;
+}
+
+/* Logo */
+.logo-container{
+    margin-top:40px;
+}
+
+.logo-text{
+    font-size:40px;
+    color:#ff0033;
+    text-shadow:0 0 20px red,0 0 40px red;
+}
+
+.logo-sub{
+    font-size:14px;
+    letter-spacing:4px;
+    color:#00ffcc;
+    text-shadow:0 0 15px #00ffcc;
+}
+
+/* Crash Counter */
+#crash{
+    font-size:42px;
+    margin:25px 0;
+    color:#00ffcc;
+    text-shadow:0 0 20px #00ffcc;
+}
+
+/* Cards */
+.container{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    margin-top:40px;
+    flex-wrap:wrap;
+}
+
+.card{
+    background:#111;
+    padding:25px 40px;
+    border-radius:12px;
+    border:1px solid red;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 40px red;
+}
+
+/* Modal */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.9);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:#111;
+    padding:30px;
+    border-radius:12px;
+    width:320px;
+    border:1px solid red;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:15px 0;
+    background:#000;
+    border:1px solid red;
+    color:#fff;
+}
+
+button.action{
+    background:red;
+    border:none;
+    padding:10px 20px;
+    color:#fff;
+    cursor:pointer;
+}
+
+.close{
+    margin-top:15px;
+    cursor:pointer;
+    color:#aaa;
+}
+
+/* Payment */
+.payment-box{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    margin-top:15px;
+}
+
+.pay-card{
+    background:#000;
+    padding:12px;
+    border:1px solid #00ffcc;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.pay-card:hover{
+    background:#00ffcc;
+    color:black;
+    box-shadow:0 0 25px #00ffcc;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div id="topTitle">crashV2.1 V5</div>
+    <div class="lang-switch">
+        <button onclick="setLang('en')">EN</button>
+        <button onclick="setLang('zh')">中文</button>
+    </div>
+</div>
+
+<div class="logo-container">
+    <div class="logo-text">CRASH V2.1</div>
+    <div class="logo-sub" id="subLogo">EXPERIMENTAL ACCESS</div>
+</div>
+
+<div id="crash">1.00x</div>
+
+<div class="container">
+    <div class="card" onclick="openModal('verify')" id="verifyBtn">Verify ID</div>
+    <div class="card" onclick="openModal('subscribe')" id="buyBtn">Buy Code</div>
+    <div class="card" onclick="openModal('download')" id="downloadBtn">Download App</div>
+</div>
+
+<!-- VERIFY -->
+<div class="modal" id="verify">
+    <div class="modal-content">
+        <h3 id="verifyTitle">Enter ID</h3>
+        <input type="text">
+        <button class="action" onclick="invalidID()" id="verifyAction">Verify</button>
+        <div class="close" onclick="closeModal()" id="close1">Close</div>
+    </div>
+</div>
+
+<!-- SUBSCRIBE -->
+<div class="modal" id="subscribe">
+    <div class="modal-content">
+        <h3 id="subTitle">Subscription</h3>
+        <p id="subText1">1 Hour = 40 USD</p>
+        <p id="subText2">Each extra hour +40 USD</p>
+
+        <hr style="margin:20px 0;border:1px solid #ff0033;">
+
+        <h4 id="payTitle">Available Payment Methods</h4>
+
+        <div class="payment-box">
+            <div class="pay-card" onclick="fakePay('Binance')">Binance</div>
+            <div class="pay-card" onclick="fakePay('Trust Wallet')">Trust Wallet</div>
+            <div class="pay-card" onclick="fakePay('Visa')">Visa Card</div>
+        </div>
+
+        <div class="close" onclick="closeModal()" id="close2">Close</div>
+    </div>
+</div>
+
+<!-- DOWNLOAD -->
+<div class="modal" id="download">
+    <div class="modal-content">
+        <h3 id="downTitle">Download App</h3>
+        <p id="downText">App not available in your country ⚠️</p>
+        <div class="close" onclick="closeModal()" id="close3">Close</div>
+    </div>
+</div>
+
+<script>
+let currentLang="en";
+
+/* Crash Counter */
+let value=1.00;
+setInterval(()=>{
+    value+=0.01;
+    if(value>(Math.random()*5+2)){ value=1.00; }
+    document.getElementById("crash").innerText=value.toFixed(2)+"x";
+},100);
+
+/* Language System */
+function setLang(lang){
+    currentLang=lang;
+
+    if(lang==="en"){
+        document.getElementById("subLogo").innerText="EXPERIMENTAL ACCESS";
+        document.getElementById("verifyBtn").innerText="Verify ID";
+        document.getElementById("buyBtn").innerText="Buy Code";
+        document.getElementById("downloadBtn").innerText="Download App";
+        document.getElementById("verifyTitle").innerText="Enter ID";
+        document.getElementById("verifyAction").innerText="Verify";
+        document.getElementById("subTitle").innerText="Subscription";
+        document.getElementById("subText1").innerText="1 Hour = 40 USD";
+        document.getElementById("subText2").innerText="Each extra hour +40 USD";
+        document.getElementById("payTitle").innerText="Available Payment Methods";
+        document.getElementById("downTitle").innerText="Download App";
+        document.getElementById("downText").innerText="App not available in your country ⚠️";
+    }else{
+        document.getElementById("subLogo").innerText="实验访问";
+        document.getElementById("verifyBtn").innerText="验证ID";
+        document.getElementById("buyBtn").innerText="购买代码";
+        document.getElementById("downloadBtn").innerText="下载应用";
+        document.getElementById("verifyTitle").innerText="输入ID";
+        document.getElementById("verifyAction").innerText="验证";
+        document.getElementById("subTitle").innerText="订阅";
+        document.getElementById("subText1").innerText="1小时 = 40 美元";
+        document.getElementById("subText2").innerText="每增加1小时 +40 美元";
+        document.getElementById("payTitle").innerText="可用支付方式";
+        document.getElementById("downTitle").innerText="下载应用";
+        document.getElementById("downText").innerText="该应用在您的国家不可用 ⚠️";
+    }
+}
+
+/* Modals */
+function openModal(id){
+    document.getElementById(id).style.display="flex";
+}
+function closeModal(){
+    document.querySelectorAll(".modal").forEach(m=>m.style.display="none");
+}
+
+/* Actions */
+function invalidID(){
+    alert(currentLang==="en" 
+    ? "Your ID is currently invalid because it has not been used for an extended period. Please contact support for further assistance." 
+    : "您的ID目前无效，因为长时间未使用。如需帮助，请联系支持团队。");
+}
+function fakePay(method){
+    alert(currentLang==="en" ? 
+    method+" payment temporarily unavailable ⚠️" :
+    method+" 支付暂时不可用 ⚠️");
+}
+</script>
+
+</body>
+</html>
